@@ -13,6 +13,8 @@ import Button from "../components/Button";
 import Icons from "../components/Icons";
 import Spacer from "../components/Spacer";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { onClickFavorite } from "../actions/favorite";
 
 export default (props) => {
   const { width } = useWindowDimensions();
@@ -20,6 +22,16 @@ export default (props) => {
   const route = useRoute();
 
   const [isDownLoading , setIsDownLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const isFavorite = useSelector((state)=>{
+    return state.favorite.favoriteList.filter((item)=> item === route.params.url).length > 0;
+  })
+
+  function onPressFavorite(){
+    dispatch(onClickFavorite(route.params.url));
+  }
 
   function onPressBackButton() {
     navigation.goBack();
@@ -76,6 +88,8 @@ export default (props) => {
           <HeaderButton iconName="arrow-back" onPress={onPressBackButton} />
           <HeaderTitle title={"ImageDetail"} />
         </HeaderGroup>
+
+        <HeaderButton iconName={isFavorite ? "heart" : "heart-outline"} onPress={onPressFavorite} color="red"/>
       </Header>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <RemoteImage
